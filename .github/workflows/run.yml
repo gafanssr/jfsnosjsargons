@@ -1,0 +1,37 @@
+name: Extended Node.js Runner
+
+on:
+  workflow_dispatch:  # 只保留手动触发，已删除定时任务
+
+jobs:
+  run_node_app:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355  # 接近6小时限制，留出缓冲时间
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3.5.0
+
+      - name: Setup Node.js 20+
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'  # 使用Node.js 20版本
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run index.js with PM2 (保持长时间运行)
+        run: |
+          npm install -g pm2
+          pm2 start index.js
+          echo "Node.js应用已启动，将运行约6小时"
+          sleep 350m  # 保持运行350分钟
+          echo "工作流即将结束，停止应用..."
+          pm2 stop index.js
+          pm2 delete index.js
+
+      - name: Check application status
+        run: |
+          pm2 list
+          echo "最后日志："
+          pm2 logs index.js --lines 20 --nostream
