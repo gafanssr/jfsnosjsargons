@@ -2,8 +2,8 @@ name: Extended Node.js Runner
 
 on:
   workflow_dispatch:  # 只保留手动触发，已删除定时任务
-  schedule:
-   ##### - cron: '0 */5 * * *' # 每5小时运行一次（UTC时间）
+  #schedule:
+    - cron: '0 */5 * * *' # 每5小时运行一次（UTC时间）
 
 jobs:
   run_node_app:
